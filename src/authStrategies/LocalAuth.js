@@ -51,6 +51,26 @@ class LocalAuth extends BaseAuthStrategy {
                     throw new Error(e);
                 });
         }
+        async logout() {
+    try {
+        if (this.client && this.client.pupBrowser) {
+            await this.client.pupBrowser.close(); // Make sure Puppeteer browser is closed
+        }
+
+        if (this.userDataDir) {
+            await fs.promises.rm(this.userDataDir, {
+                recursive: true,
+                force: true,
+                maxRetries: this.rmMaxRetries
+            });
+        }
+    } catch (error) {
+        console.error('Logout failed:', error);
+        // Optionally: do not rethrow to prevent server crash
+        // throw new Error(error);
+    }
+}
+
     }
 
 }
